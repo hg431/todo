@@ -1,0 +1,264 @@
+:root {
+    --main-light: #F1F5F9;
+    --main-medium: #CBD5E1;
+    --main-dark: #475569;
+    --amber-light: #FFFBEB;
+    --amber-dark:  #B45309;
+    --green-light: #F7FEE7;
+    --green-dark:  #4D7C0F;
+    --blue-light:  #F0F9FF;
+    --blue-dark: #0369A1;
+    --important: #B91C1C;
+ }
+
+ @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
+ body {
+    font-family: 'Roboto', sans-serif;
+    color: #0F172A;
+ }
+
+ ul, li {
+    margin:0;
+    padding:0;
+    list-style:none;
+  }
+
+ /* HEADER NAVIGATION */
+
+  header ul {
+    display:grid;
+    grid-template-columns: repeat(2, 50%);
+    font-size:24px;
+    font-weight:700;
+  }
+
+  header li {
+    padding: 20px;
+    background: var(--main-light);
+    border-bottom: 1px solid var(--main-medium);
+    text-align: center;
+    cursor: pointer;
+  }
+
+  header li:hover {
+    background-color: var(--main-medium);
+  }
+
+  header ul li img {
+    width:25px;
+    height:25px;
+    margin-right:4px;
+    vertical-align: middle;
+    filter: brightness(0) saturate(100%) invert(6%) sepia(19%) saturate(4883%) hue-rotate(203deg) brightness(94%) contrast(93%);
+  }
+
+/* SETTINGS FOOTER */
+
+  footer {
+    border-top: 1px solid var(--main-medium);
+    background: var(--main-light);
+    position:absolute;
+    bottom:0;
+    width: calc(100% - 30px);
+    grid-template-columns: 50px 1fr;
+    gap: 30px 15px;
+    padding: 15px;
+    font-size: 18px;
+    font-weight:700;
+    display:none;
+}
+
+.circle {
+    height: 58px;
+    width: 58px;
+    background-color: var(--main-medium);
+    border-radius: 50%;
+    position:absolute;
+    right: 5px;
+    bottom: 5px;
+    cursor: pointer;
+  }
+
+  #close img {
+    transform: translate(50%, 50%);
+    width:30px;
+    height: 30px;
+  }
+
+  #cog img {
+    transform: translate(66%, 66%);
+  }
+
+  #footer .circle {
+    z-index:5;
+  }
+
+/* MAIN */
+
+  .important {
+    color: var(--important);
+  }
+
+  .checked {
+    text-decoration: line-through;
+  }
+
+  main ul li {
+    font-size: 14px;
+    border-bottom: 1px solid var(--main-light);
+    padding: 18px 0;
+    margin:0 5px;
+    display: grid;
+    grid-template-columns: 30px 1fr;
+    align-items: start;
+  }
+
+  main ul li:first-of-type {
+    color: var(--main-dark);
+  }
+
+  main ul li:first-of-type img, main ul li input[type="checkbox"] {
+    width:15px;
+    height:15px;
+    justify-self:center;
+  }
+
+  main ul li div p .bin {
+    position: absolute;
+    right: 10px;
+    padding-top: 12px;
+  }
+
+  main ul li p button {
+    width: 120px;
+    height: 42px;
+    background: var(--main-light);
+    border-radius: 10px;
+    font-size:20px;
+    font-weight: 700;
+    cursor: pointer;
+    border:1px solid var(--main-dark);
+  }
+
+  main ul li p button img {
+    padding-right:3px;
+  }
+
+/* NEEDS FIXING - CLASH BETWEEN THE TASK AND A SELECTED TAG
+
+main ul li input[type="checkbox"]:checked + label {
+    text-decoration:line-through;
+  } */
+
+  .date {
+    background-color: var(--main-light);
+    border-radius: 15px;
+    background-image: url(icons/date.svg);
+    background-repeat: no-repeat;
+    background-position:5px;
+    background-size: 14px 14px;
+    padding-left: 20px;
+    padding-right:5px;
+    font-size:13px;
+    border:none;
+    color: var(--main-dark);
+  }
+
+  #newtaskform {
+    display:none;
+  }
+
+ input[type="date"]::-webkit-inner-spin-button,
+    input[type="date"]::-webkit-calendar-picker-indicator {
+    display: none;
+    -webkit-appearance: none;
+} 
+
+  input[name="date"]:checked + label  {
+    background-color: var(--main-dark);
+    color: var(--main-light);
+  }
+
+  .setDarkDate {
+    background-color: var(--main-dark);
+    color: var(--main-light);
+  }
+
+  .hiddenradio {
+    display:none;
+  }
+
+input[id="amber-tag"]:checked + label, input[id="show-amber-tag"]:checked + label {
+    background-color: var(--amber-dark);
+    color: var(--amber-light);
+  }
+
+  input[id="blue-tag"]:checked + label, input[id="show-blue-tag"]:checked + label {
+    background-color: var(--blue-dark);
+    color: var(--blue-light);
+  }
+
+  input[id="green-tag"]:checked + label,   input[id="show-green-tag"]:checked + label {
+    background-color: var(--green-dark);
+    color: var(--green-light);
+  }
+
+  input[id="show-untagged-tag"]:checked + label {
+    background-color: var(--main-dark);
+    color: var(--main-light);
+  }
+
+  .tag {
+    border-radius: 15px;
+    padding-right:5px;
+    padding-left:4px;
+    font-size:13px;
+    white-space: nowrap;
+    font-weight: normal;
+  }
+
+  .tag::before {
+    content: "";
+    display:inline-block;
+    width: 12px;
+    height: 12px;
+    vertical-align: -2px;
+    background-size:12px 12px;
+  }
+.amber {
+    background-color: var(--amber-light);
+    color: var(--amber-dark);
+}
+.amber::before {
+    background-image: url(icons/tag.svg); 
+    filter: brightness(0) saturate(100%) invert(27%) sepia(95%) saturate(1606%) hue-rotate(16deg) brightness(94%) contrast(93%);
+}
+
+.blue {
+    background-color: var(--blue-light);
+    color: var(--blue-dark);
+}
+.blue::before {
+    background-image: url(icons/tag.svg); 
+    filter: brightness(0) saturate(100%) invert(20%) sepia(94%) saturate(2653%) hue-rotate(185deg) brightness(89%) contrast(98%);
+}
+.green {
+    background-color: var(--green-light);
+    color: var(--green-dark);
+}
+.green::before {
+    background-image: url(icons/tag.svg); 
+    filter: brightness(0) saturate(100%) invert(39%) sepia(69%) saturate(5103%) hue-rotate(65deg) brightness(94%) contrast(88%);
+}
+.grey {
+    background-color: var(--main-light);
+    color: var(--main-dark);
+}
+.grey::before {
+    background-image: url(icons/tag.svg); 
+    filter: brightness(0) saturate(100%) invert(30%) sepia(10%) saturate(1387%) hue-rotate(176deg) brightness(95%) contrast(83%);
+}
+.bin {
+    filter: brightness(0) saturate(100%) invert(29%) sepia(8%) saturate(1785%) hue-rotate(176deg) brightness(95%) contrast(80%);
+}
