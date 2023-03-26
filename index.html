@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To do list</title>
+<script defer src="index.bundle.js"></script>
+<script defer src="display.bundle.js"></script>
+</head>
+<body>
+<header>
+    <ul>
+        <li><img src="tasktick.svg" alt="Tags">Tasks</li>
+        <li><img src="tag.svg" alt="Tags">Tags</li>
+    </ul>
+</header>
+<main>
+    <ul id="container">
+
+        <li id="newtask">
+            <img src="plus.svg" />
+            <div>New task...</div>
+        </li>
+
+        <li id="newtaskform">
+        <input type="checkbox">
+        <div>
+            
+            <div contenteditable="true" id="new-task-title">This is what you'll see when creating a new task</div>
+            
+            <p><strong>Deadline: </strong>
+
+                <input type="radio" name="date" class="hiddenradio" id="today"><label for="today" class="date">Today</label>
+
+                <input type="radio" name="date" class="hiddenradio" id="tomorrow"><label for="tomorrow" class="date">Tomorrow</label>
+
+                <input type="radio" name="date" class="hiddenradio" id="datepicker"><label for="datepicker">
+                    <input type="date" name="date" class="date" id="datepickerinput" onclick="selectDatePicker()">
+                 </label>
+            
+            </p>
+
+            <p><strong>Tags:            </strong> 
+
+                <input type="checkbox" name="tag" id="amber-tag" class="hiddenradio" value="Personal">
+                <label for="amber-tag" class="tag amber">Personal</label>
+
+                <input type="checkbox" name="tag" id="blue-tag" class="hiddenradio" value="Work">
+                <label for="blue-tag" class="tag blue">Work</label>
+
+                <input type="checkbox" name="tag" id="green-tag" class="hiddenradio" value="Other">
+                <label for="green-tag" class="tag green">Other</label>
+            
+            </p>
+            <p><strong>Important: </strong><input type="checkbox" name="important" id="important"></p>
+            <p><button onclick="add()">Add</button><img src="bin.svg" alt="Bin" class="bin"></p>
+        </div>
+        </li>
+
+    </ul>
+</main>
+<div id="cog" class="circle"><img src="settings.svg" alt="Settings"></div>
+
+<footer id="footer">
+    <div id="close" class="circle"><img src="close.svg" alt="Close"></div>
+
+    <div>Show:</div>
+        
+        <div>
+            <input type="checkbox" name="showtag" id="show-amber-tag" class="hiddenradio">
+            <label for="show-amber-tag" class="tag amber">Tagname</label>
+
+            <input type="checkbox" name="showtag" id="show-blue-tag" class="hiddenradio">
+            <label for="show-blue-tag" class="tag blue">Tagname</label>
+
+            <input type="checkbox" name="showtag" id="show-green-tag" class="hiddenradio">
+            <label for="show-green-tag" class="tag green">Tagname</label>
+
+            <input type="checkbox" name="showtag" id="show-untagged-tag" class="hiddenradio">
+            <label for="show-untagged-tag" class="tag grey">Untagged</label>
+        </div>
+
+        <div>Clear:</div>
+        <div><img src="bin.svg" alt="" class="bin"></div>
+</footer>
+<script>
+
+    const datePickerInput = document.getElementById("datepickerinput");
+    const datePicker = document.getElementById("datepicker")
+    // function to set the selected style then show datepicker
+    function selectDatePicker() {
+        /* datePicker.checked = true; */
+        datePickerInput.classList.add("setDarkDate");
+        datePickerInput.showPicker();
+    }
+</script>
+</body>
+</html>
