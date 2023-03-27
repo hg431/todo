@@ -6,10 +6,10 @@ import addDays from 'date-fns/addDays';
 import format from 'date-fns/format';
 import startOfToday from 'date-fns/startOfToday';
 import isBefore from 'date-fns/isBefore';
-import startOfTomorrow from 'date-fns/startOfTomorrow';
 import {
   tasks, Task, orderTasks, tags,
 } from './index';
+import { updateCompletedStatus, clickTask } from './newTask';
 
 // Everything UI and DOM
 // User interface/DOM: render the tasklist in order
@@ -18,6 +18,7 @@ import {
 
 const footer = document.getElementById('footer');
 const newTaskForm = document.getElementById('newtaskform');
+export { newTaskForm };
 
 document.getElementById('cog').addEventListener('click', () => {
   footer.style.display = 'grid';
@@ -56,6 +57,41 @@ function getTags(i) {
 
 }
 
+// Render tags
+
+export function renderTags() {
+  /*   <input type="checkbox" name="showtag" id="show-amber-tag" class="hiddenradio">
+  <label for="show-amber-tag" class="tag amber">Tagname</label>
+
+  <input type="checkbox" name="showtag" id="show-blue-tag" class="hiddenradio">
+  <label for="show-blue-tag" class="tag blue">Tagname</label>
+
+  <input type="checkbox" name="showtag" id="show-green-tag" class="hiddenradio">
+  <label for="show-green-tag" class="tag green">Tagname</label>
+
+  <input type="checkbox" name="showtag" id="show-untagged-tag" class="hiddenradio">
+  <label for="show-untagged-tag" class="tag grey">Untagged</label> */
+
+  for (let i = 0; i < tags.length; i++) {
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.name = 'showtag';
+    checkbox.classList.add('hiddenradio');
+    const tagColour = tags[i].colour.toLowerCase();
+    // Set ID e.g. show-amber-tag
+    const label = document.createElement('label');
+    label.for = // e.g. show-amber-tag;
+  label.classList.add('tag');
+    label.classList.add(tagColour);
+    // add label name as a child of the label
+    const tagText = document.createTextNode(tags[i].name);
+    // append all of this to something
+    label.appendChild(tagText);
+    document.getElementById('tagcontainer').appendChild(checkbox);
+    document.getElementById('tagcontainer').appendChild(label);
+  }
+}
+
 // Render the tasklist by: calling the ordering function, for each loop, create li
 const container = document.getElementById('container');
 
@@ -66,17 +102,23 @@ export function renderTasks() {
 
   const dynamicListElements = document.querySelectorAll('main ul li');
 
-  for (let z = 2; z < dynamicListElements.length; z++) {
-    console.log(`I'm removing z= ${z}`);
+  for (let z = 2; z < dynamicListElements.length; z++) { // Removes third li onwards
     dynamicListElements[z].parentElement.removeChild(dynamicListElements[z]);
   }
 
   for (let i = 0; i < tasks.length; i++) {
     // Create some elements
     const li = document.createElement('li');
+    li.setAttribute('data-task', i);
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
+    checkbox.addEventListener('click', () => {
+      updateCompletedStatus(i);
+    });
     const div = document.createElement('div');
+    div.addEventListener('click', () => {
+      clickTask(i);
+    });
     const span = document.createElement('span');
 
     // Create some content for those elements
@@ -129,45 +171,3 @@ export function renderTasks() {
     container.appendChild(li);
   }
 }
-
-window.add = function () {
-// Do some form validation and error checking at a later stage
-
-  function getSelectedDeadline() {
-    if (document.getElementById('today').checked) {
-      return format(startOfToday(), 'yyyy-LL-dd');
-    } if (document.getElementById('tomorrow').checked) {
-      return format(startOfTomorrow(), 'yyyy-LL-dd');
-    }
-  }
-  console.log(`Function getSelectedDeadline ${getSelectedDeadline}`);
-  const tagCheckboxes = document.querySelectorAll('input[name=tag]');
-  console.log(`tagCheckboxes ${tagCheckboxes}`);
-  function getChosenTags() {
-    const arrayOfChosenTags = [];
-    console.table(arrayOfChosenTags);
-    for (let i = 0; i < tagCheckboxes.length; i++) {
-      console.log(`i = ${i}`);
-      const tagCheckbox = tagCheckboxes[i];
-      if (tagCheckbox.checked) arrayOfChosenTags.push(tagCheckbox.value);
-    }
-    return arrayOfChosenTags;
-  }
-
-  // Define some constants for title, deadline, chosenTags, important
-  const title = document.getElementById('new-task-title').innerHTML;
-  const deadline = getSelectedDeadline();
-  const chosenTags = getChosenTags();
-  const important = document.getElementById('important').checked;
-
-  // Add it to the tasks array
-
-  new Task(title, deadline, important, chosenTags, false);
-
-  console.table(tasks);
-
-  newTaskForm.style.display = 'none';
-
-  // Render the task list again
-  renderTasks();
-};

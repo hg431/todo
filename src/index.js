@@ -8,13 +8,14 @@ import SettingsIcon from './icons/settings.svg';
 import TagIcon from './icons/tag.svg';
 import TaskIcon from './icons/task.svg';
 import TaskTickIcon from './icons/tasktick.svg';
-import { renderTasks, getDeadline, add } from './display';
+import {
+  renderTasks, renderTags, getDeadline,
+} from './display';
+import { add } from './newTask';
 
 export {
   tasks, Task, orderTasks, tags,
 };
-
-// Constructor/class to generate tasks, with these properties: title, deadline, important, tags
 
 const tags = [];
 
@@ -42,8 +43,8 @@ class Task {
     tasks.push(this);
   }
 }
-
-new Task('Important tagless task completed', '2023-03-20', true, [''], true);
+// Bug - task must have a deadline otherwise errors
+new Task('Important tagless task completed', '2023-03-29', true, [''], true);
 new Task('Work task, unimportant, deadline later uncompleted', '2023-03-28', false, ['Work', 'Personal'], false);
 new Task('Work task, unimportant, deadline earlier uncompleted', '2023-03-27', false, ['Work'], false);
 new Task('Personal important task uncompleted', '2023-04-26', true, ['Personal'], false);
@@ -74,3 +75,5 @@ function orderTasks() {
 console.table(orderTasks());
 
 renderTasks();
+
+renderTags();
