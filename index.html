@@ -7,6 +7,7 @@
     <title>To do list</title>
 <script defer src="index.bundle.js"></script>
 <script defer src="display.bundle.js"></script>
+<script defer src="newTask.bundle.js"></script>
 </head>
 <body>
 <header>
@@ -31,9 +32,9 @@
             
             <p><strong>Deadline: </strong>
 
-                <input type="radio" name="date" class="hiddenradio" id="today"><label for="today" class="date">Today</label>
+                <input type="radio" name="date" class="hiddenradio" id="today"><label for="today" class="date" id="todaylabel">Today</label>
 
-                <input type="radio" name="date" class="hiddenradio" id="tomorrow"><label for="tomorrow" class="date">Tomorrow</label>
+                <input type="radio" name="date" class="hiddenradio" id="tomorrow"><label for="tomorrow" class="date" id="tomorrowlabel">Tomorrow</label>
 
                 <input type="radio" name="date" class="hiddenradio" id="datepicker"><label for="datepicker">
                     <input type="date" name="date" class="date" id="datepickerinput" onclick="selectDatePicker()">
@@ -54,7 +55,7 @@
             
             </p>
             <p><strong>Important: </strong><input type="checkbox" name="important" id="important"></p>
-            <p><button onclick="add()">Add</button><img src="bin.svg" alt="Bin" class="bin"></p>
+            <p><button id="add">Add</button><img src="bin.svg" alt="Bin" class="bin"></p>
         </div>
         </li>
 
@@ -67,15 +68,15 @@
 
     <div>Show:</div>
         
-        <div>
-            <input type="checkbox" name="showtag" id="show-amber-tag" class="hiddenradio">
+        <div id="tagcontainer">
+<!--             <input type="checkbox" name="showtag" id="show-amber-tag" class="hiddenradio">
             <label for="show-amber-tag" class="tag amber">Tagname</label>
 
             <input type="checkbox" name="showtag" id="show-blue-tag" class="hiddenradio">
             <label for="show-blue-tag" class="tag blue">Tagname</label>
 
             <input type="checkbox" name="showtag" id="show-green-tag" class="hiddenradio">
-            <label for="show-green-tag" class="tag green">Tagname</label>
+            <label for="show-green-tag" class="tag green">Tagname</label> -->
 
             <input type="checkbox" name="showtag" id="show-untagged-tag" class="hiddenradio">
             <label for="show-untagged-tag" class="tag grey">Untagged</label>
@@ -84,16 +85,5 @@
         <div>Clear:</div>
         <div><img src="bin.svg" alt="" class="bin"></div>
 </footer>
-<script>
-
-    const datePickerInput = document.getElementById("datepickerinput");
-    const datePicker = document.getElementById("datepicker")
-    // function to set the selected style then show datepicker
-    function selectDatePicker() {
-        /* datePicker.checked = true; */
-        datePickerInput.classList.add("setDarkDate");
-        datePickerInput.showPicker();
-    }
-</script>
 </body>
 </html>
