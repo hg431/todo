@@ -1,5 +1,9 @@
 import './clean.css';
 import './style.css';
+import {
+  renderTasks, renderTags, getDeadline,
+} from './display.js';
+import './newTask.js';
 import BinIcon from './icons/bin.svg';
 import CloseIcon from './icons/close.svg';
 import DateIcon from './icons/date.svg';
@@ -8,10 +12,7 @@ import SettingsIcon from './icons/settings.svg';
 import TagIcon from './icons/tag.svg';
 import TaskIcon from './icons/task.svg';
 import TaskTickIcon from './icons/tasktick.svg';
-import {
-  renderTasks, renderTags, getDeadline,
-} from './display';
-import { add } from './newTask';
+/* import { add } from './newTask'; */
 
 export {
   tasks, Task, orderTasks, tags,

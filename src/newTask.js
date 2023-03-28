@@ -133,12 +133,11 @@ export function clickTask(data) {
     div.classList.add('important');
   }
   document.querySelector(`[data-task="${data}"]`).querySelector('div').appendChild(div);
+
+  // REMEMBER TO REMOVE THE EVENT LISTENER SO YOU CAN'T KEEP CLICKING - PREVENTS INTERACTION WITH THE EDIT TASK FORM
 }
 
 { /*
-<div>
-
-    <div contenteditable="true" id="new-task-title">This is what you'll see when creating a new task</div>
 
     <p><strong>Deadline: </strong>
 
