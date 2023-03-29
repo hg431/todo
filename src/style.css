@@ -165,9 +165,9 @@ main ul li input[type="checkbox"]:checked + label {
     color: var(--main-dark);
   }
 
-  #newtaskform {
+ /*  #newtaskform {
     display:none;
-  }
+  } */
 
  input[type="date"]::-webkit-inner-spin-button,
     input[type="date"]::-webkit-calendar-picker-indicator {

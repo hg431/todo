@@ -1,9 +1,8 @@
 import './clean.css';
 import './style.css';
-import {
-  renderTasks, renderTags, getDeadline,
-} from './display.js';
-import './newTask.js';
+import format from 'date-fns/format';
+
+import { add, dateDom } from './newTask.js';
 import BinIcon from './icons/bin.svg';
 import CloseIcon from './icons/close.svg';
 import DateIcon from './icons/date.svg';
@@ -12,25 +11,44 @@ import SettingsIcon from './icons/settings.svg';
 import TagIcon from './icons/tag.svg';
 import TaskIcon from './icons/task.svg';
 import TaskTickIcon from './icons/tasktick.svg';
-/* import { add } from './newTask'; */
+
+/* renderTags(); */
+
+import View from './display.js';
 
 export {
-  tasks, Task, orderTasks, tags,
+  tasks, Task, list,
 };
 
-const tags = [];
-
 class Tag {
-  constructor(name, colour) {
-    this.name = name;
-    this.colour = colour;
-    tags.push(this);
+  constructor() {
+    this.tags = [
+      { id: 1, name: 'Personal', colour: 'Amber' },
+      { id: 2, name: 'Work', colour: 'Blue' },
+      { id: 3, name: 'Other', colour: 'Green' },
+    ];
+  }
+
+  addTag(name, colour) {
+    const tag = {
+      id: this.tags.length > 0 ? this.tags[this.tags.length - 1].id + 1 : 1,
+      name,
+      colour,
+    };
+    this.tags.push(tag);
+  }
+
+  editTag(id, name, colour) {
+    this.tags = this.tags.map((tag) => (tag.id === id ? { id: tag.id, name, colour } : tag));
+  }
+
+  deleteTag(id) {
+    this.tags = this.tags.filter((tag) => tag.id !== id);
   }
 }
 
-new Tag('Personal', 'Amber');
-new Tag('Work', 'Blue');
-new Tag('Other', 'Green');
+const list = new Tag();
+console.table(list.tags);
 
 let tasks = [];
 
@@ -45,36 +63,40 @@ class Task {
   }
 }
 // Bug - task must have a deadline otherwise errors
+
 new Task('Important tagless task completed', '2023-03-29', true, [''], true);
-new Task('Work task, unimportant, deadline later uncompleted', '2023-03-28', false, ['Work', 'Personal'], false);
-new Task('Work task, unimportant, deadline earlier uncompleted', '2023-03-27', false, ['Work'], false);
-new Task('Personal important task uncompleted', '2023-04-26', true, ['Personal'], false);
+new Task('Work task, unimportant, deadline later uncompleted', '2023-03-28', false, ['2', '1'], false);
+new Task('Work task, unimportant, deadline earlier uncompleted', '2023-03-27', false, ['2'], false);
+new Task('Personal important task uncompleted', '2023-04-26', true, ['1'], false);
 
-function orderTasks() {
+export const view = new View();
+view.renderTasks();
+view.renderTags();
+
+export function orderTasks() {
   const completedTasks = tasks.filter((obj) => obj.completed === true);
-
   const uncompletedImportantTasks = tasks.filter(
     (obj) => ((obj.important === true) && (obj.completed === false)),
   );
-
   const uncompletedUnimportantTasks = tasks.filter(
     (obj) => ((obj.important === false) && (obj.completed === false)),
   );
-
   function sortDate(array) {
     return array.sort((a, b) => (new Date(a.deadline) - new Date(b.deadline)));
   }
-
   sortDate(completedTasks);
   sortDate(uncompletedImportantTasks);
   sortDate(uncompletedUnimportantTasks);
-
   tasks = [...uncompletedImportantTasks, ...uncompletedUnimportantTasks, ...completedTasks];
   return tasks;
 }
 
-console.table(orderTasks());
+export function editTask(data, title, deadline, important, chosenTags, completed) {
+  const index = data;
+  tasks[index] = {
+    title, deadline, important, chosenTags, completed,
+  };
+  view.renderTasks();
+}
 
-renderTasks();
-
-renderTags();
+editTask(0, 'Changed title', '2023-03-29', true, ['1'], false);
