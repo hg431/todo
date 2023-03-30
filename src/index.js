@@ -1,26 +1,8 @@
 import './clean.css';
 import './style.css';
-import format from 'date-fns/format';
-
-import { add, dateDom } from './newTask.js';
-import BinIcon from './icons/bin.svg';
-import CloseIcon from './icons/close.svg';
-import DateIcon from './icons/date.svg';
-import PlusIcon from './icons/plus.svg';
-import SettingsIcon from './icons/settings.svg';
-import TagIcon from './icons/tag.svg';
-import TaskIcon from './icons/task.svg';
-import TaskTickIcon from './icons/tasktick.svg';
-
-/* renderTags(); */
-
 import View from './display.js';
 
-export {
-  tasks, Task, list,
-};
-
-class Tag {
+export class Tag {
   constructor() {
     this.tags = [
       { id: 1, name: 'Personal', colour: 'Amber' },
@@ -28,7 +10,6 @@ class Tag {
       { id: 3, name: 'Other', colour: 'Green' },
     ];
     this.tagHide = [];
-    console.table(this.tagHide);
   }
 
   addTag(name, colour) {
@@ -57,13 +38,11 @@ class Tag {
   }
 }
 
-// Change rendering of task so that it filters out any tasks which have a tag in tagHide
+export const list = new Tag();
 
-const list = new Tag();
+export let tasks = [];
 
-let tasks = [];
-
-class Task {
+export class Task {
   constructor(title, deadline, important, chosenTags, completed) {
     this.title = title;
     this.deadline = deadline;
@@ -73,7 +52,6 @@ class Task {
     tasks.push(this);
   }
 }
-// Bug - task must have a deadline otherwise errors
 
 new Task('Important tagless task completed', '2023-03-29', true, [], true);
 new Task('Work task, unimportant, deadline later uncompleted', '2023-03-28', false, ['2', '1'], false);
@@ -103,15 +81,17 @@ export function orderTasks() {
 }
 
 export function editTask(data, title, deadline, important, chosenTags, completed) {
-  const index = data;
-  tasks[index] = {
+  tasks[data] = {
     title, deadline, important, chosenTags, completed,
   };
   view.renderTasks();
 }
 
 export function deleteTask(data) {
-  const index = data;
-  tasks.splice(index, 1);
+  tasks.splice(data, 1);
   view.renderTasks();
+}
+
+export function toggleCompletedStatus(id) {
+  tasks[id].completed = !tasks[id].completed;
 }
