@@ -149,7 +149,7 @@ export default class View {
         checkbox.id = `${tagColour}-tag`;
         label.htmlFor = `${tagColour}-tag`;
         this.getElement(`[data-tagcontainerid="${data}"]`).append(checkbox, label);
-      } else {
+      } else { // this is the settings filter
         checkbox.id = `show-${tagColour}-tag`;
         label.htmlFor = `show-${tagColour}-tag`;
         if (list.tagHide.every((num) => num !== list.tags[i].id)) {
@@ -159,6 +159,19 @@ export default class View {
           this.getElement('input#show-untagged-tag').checked = true;
         }
         this.getElement('#tagcontainer').append(checkbox, label);
+        checkbox.addEventListener('click', () => {
+          if (checkbox.checked) {
+            console.log('It was unchecked, now it\'s checked, so let\'s remove it');
+            list.deleteTagHide(list.tags[i].id);
+            console.log(list.tagHide);
+            this.renderTasks();
+          } else if (!(checkbox.checked)) {
+            console.log('It was checked, now it\'s unchecked, so let\'s add it');
+            list.addTagHide(list.tags[i].id);
+            console.log(list.tagHide);
+            this.renderTasks();
+          }
+        });
       }
       // This will be a bug when there are multiple tags of the same colour
     }
@@ -168,10 +181,12 @@ export default class View {
           console.log('It was unchecked, now it\'s checked, so let\'s remove it');
           list.deleteTagHide('untagged');
           console.log(list.tagHide);
+          this.renderTasks();
         } else if (!(this.getElement('input#show-untagged-tag').checked)) {
           console.log('It was checked, now it\'s unchecked, so let\'s add it');
           list.addTagHide('untagged');
           console.log(list.tagHide);
+          this.renderTasks();
         }
       });
     }
@@ -181,10 +196,23 @@ export default class View {
     orderTasks();
     console.table(tasks);
     const dynamicListElements = document.querySelectorAll('main ul li');
-    for (let z = 1; z < dynamicListElements.length; z++) { // Removes third li onwards
+    for (let z = 1; z < dynamicListElements.length; z++) { // Removes second li onwards
       dynamicListElements[z].parentElement.removeChild(dynamicListElements[z]);
     }
-
+    const filteredTasks = tasks.filter((element) => {
+      if (element.chosenTags.length === 0) {
+        if (list.tagHide.includes('untagged')) {
+          console.log('Task has no tag, and untagged needs to be hidden, let\'s fail');
+          return false;
+        } return true;
+      } if (element.chosenTags.every((el) => list.tagHide.some((e) => e === Number(el)))) {
+        console.log('Every task tag is on the hide list, let\'s fail');
+        return false;
+      }
+      console.log('This task doesn\'t fail the two tests, so goes through');
+      return true;
+    });
+    console.table(filteredTasks);
     for (let i = 0; i < tasks.length; i++) {
       const li = this.createElement('li');
       li.setAttribute('data-task', i);
@@ -203,12 +231,13 @@ export default class View {
       if (tasks[i].completed) {
         checkbox.checked = true;
         div.classList.add('checked');
+        span.style.display = 'none';
       }
       if (tasks[i].important) {
         div.classList.add('important');
       }
       for (let y = 0; y < tasks[i].chosenTags.length; y++) {
-        if (tasks[i].chosenTags[y] !== '') {
+        if ((tasks[i].chosenTags[y] !== '') && !(tasks[i].completed)) {
           const tagSpan = this.createElement('span', 'tag');
           const tag = list.tags.find((e) => e.id === Number(tasks[i].chosenTags[y]));
           tagSpan.classList.add(tag.colour.toLowerCase());
@@ -216,10 +245,21 @@ export default class View {
           div.append(tagSpan);
         }
       }
-
+      function containsObject(obj, list) {
+        let i;
+        for (i = 0; i < list.length; i++) {
+          if (list[i] === obj) {
+            return true;
+          }
+        }
+        return false;
+      }
       li.append(checkbox, div);
       div.append(span);
       container.append(li);
+      if (!containsObject(tasks[i], filteredTasks)) {
+        li.style.display = 'none';
+      }
     }
   }
 

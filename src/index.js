@@ -27,7 +27,7 @@ class Tag {
       { id: 2, name: 'Work', colour: 'Blue' },
       { id: 3, name: 'Other', colour: 'Green' },
     ];
-    this.tagHide = ['untagged'];
+    this.tagHide = [];
     console.table(this.tagHide);
   }
 
@@ -57,8 +57,6 @@ class Tag {
   }
 }
 
-// Add event listeners for addTagHide(id) and deleteTagHide(id) then renderTags
-// What to do about untagged?
 // Change rendering of task so that it filters out any tasks which have a tag in tagHide
 
 const list = new Tag();
@@ -77,7 +75,7 @@ class Task {
 }
 // Bug - task must have a deadline otherwise errors
 
-new Task('Important tagless task completed', '2023-03-29', true, [''], true);
+new Task('Important tagless task completed', '2023-03-29', true, [], true);
 new Task('Work task, unimportant, deadline later uncompleted', '2023-03-28', false, ['2', '1'], false);
 new Task('Work task, unimportant, deadline earlier uncompleted', '2023-03-27', false, ['2'], false);
 new Task('Personal important task uncompleted', '2023-04-26', true, ['1'], false);
