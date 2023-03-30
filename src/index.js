@@ -27,6 +27,8 @@ class Tag {
       { id: 2, name: 'Work', colour: 'Blue' },
       { id: 3, name: 'Other', colour: 'Green' },
     ];
+    this.tagHide = ['untagged'];
+    console.table(this.tagHide);
   }
 
   addTag(name, colour) {
@@ -45,10 +47,21 @@ class Tag {
   deleteTag(id) {
     this.tags = this.tags.filter((tag) => tag.id !== id);
   }
+
+  addTagHide(id) {
+    this.tagHide.push(id);
+  }
+
+  deleteTagHide(id) {
+    this.tagHide = this.tagHide.filter((e) => e !== id);
+  }
 }
 
+// Add event listeners for addTagHide(id) and deleteTagHide(id) then renderTags
+// What to do about untagged?
+// Change rendering of task so that it filters out any tasks which have a tag in tagHide
+
 const list = new Tag();
-console.table(list.tags);
 
 let tasks = [];
 
@@ -99,4 +112,8 @@ export function editTask(data, title, deadline, important, chosenTags, completed
   view.renderTasks();
 }
 
-editTask(0, 'Changed title', '2023-03-29', true, ['1'], false);
+export function deleteTask(data) {
+  const index = data;
+  tasks.splice(index, 1);
+  view.renderTasks();
+}
