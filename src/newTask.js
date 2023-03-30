@@ -17,7 +17,7 @@ export function add() {
   const title = document.getElementById('new-task-title').innerHTML;
   const deadline = document.getElementById('datepickerinput').value;
   const important = document.getElementById('important').checked;
-  const chosenTags = function () {
+  function chosenTags() {
     const arrayOfChosenTags = [];
     const tagCheckboxes = document.querySelectorAll('#newtagcontainer input[name=tag]');
     for (let i = 0; i < tagCheckboxes.length; i++) {
@@ -27,8 +27,8 @@ export function add() {
     }
     console.table(arrayOfChosenTags);
     return arrayOfChosenTags;
-  };
-  new Task(title, deadline, important, chosenTags, false);
+  }
+  new Task(title, deadline, important, chosenTags(), false);
   console.table(tasks);
   const newTaskForm = document.getElementById('newtaskform');
   newTaskForm.style.display = 'none';

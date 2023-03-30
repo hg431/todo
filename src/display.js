@@ -254,9 +254,9 @@ export default class View {
         if (tagElement);
         tagElement.checked = true;
       }
-      if (tasks[data].important) {
-        this.getElement('#important').checked = true;
-      }
+    }
+    if (tasks[data].important) {
+      this.getElement('input#important').checked = true;
     }
     this.getElement('#edit').addEventListener('click', () => {
       this.editTaskRequest(data);
