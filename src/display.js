@@ -219,6 +219,10 @@ export default class View {
       this.deleteTaskRequest(data);
     }, { once: true });
     this.selectText(`[data-task="${data}"] div div`);
+    const date = this.getElement(`[data-task="${data}"] input#datepickerinput`);
+    date.addEventListener('click', () => {
+      date.showPicker();
+    });
   }
 
   renderTags(instruction, data) {
