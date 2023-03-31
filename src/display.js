@@ -7,16 +7,8 @@ import format from 'date-fns/format';
 import startOfToday from 'date-fns/startOfToday';
 import startOfTomorrow from 'date-fns/startOfTomorrow';
 import isBefore from 'date-fns/isBefore';
-import BinIcon from './icons/bin.svg';
-import CloseIcon from './icons/close.svg';
-import DateIcon from './icons/date.svg';
-import PlusIcon from './icons/plus.svg';
-import SettingsIcon from './icons/settings.svg';
-import TagIcon from './icons/tag.svg';
-import TaskIcon from './icons/task.svg';
-import TaskTickIcon from './icons/tasktick.svg';
 import {
-  tasks, Task, tags, orderTasks, view, list, editTask, deleteTask, toggleCompletedStatus,
+  tasks, Task, orderTasks, view, list, editTask, deleteTask, toggleCompletedStatus,
 } from './index';
 
 export default class View {
@@ -32,6 +24,12 @@ export default class View {
     this.container.append(this.newtask);
     this.newtask.addEventListener('click', () => {
       this.createNewTaskForm();
+    });
+    this.getElement('header ul li:first-child').addEventListener('click', () => {
+      this.clickNav('tasks');
+    });
+    this.getElement('header ul li:nth-child(2)').addEventListener('click', () => {
+      this.clickNav('tags');
     });
   }
 
@@ -133,6 +131,65 @@ export default class View {
     }, { once: true });
   }
 
+  createNewTagForm() {
+    const form = this.createElement('li');
+    form.id = 'newtaskform';
+    const img = this.createElement('img');
+    img.src = 'tag.svg';
+    const div = this.createElement('div');
+    div.innerHTML = `<div><label for="newtagname"><strong>Name: </strong></label><input type="text" name"newtagname"></div>
+    <p><strong>Colour: </strong>
+        <input type="radio" name="tagcolour" class="hiddenradio" id="tagcolourgreen" value="green"><label for="tagcolourgreen" class="tag green" id="greenlabel">Green</label>
+        <input type="radio" name="tagcolour" class="hiddenradio" id="tagcolourblue" value="blue"><label for="tagcolourblue" class="tag blue" id="bluelabel">Blue</label>
+        <input type="radio" name="tagcolour" class="hiddenradio" id="tagcolouramber" value="amber"><label for="tagcolouramber" class="tag amber" id="amberlabel">Amber</label>
+    </p>
+    <p><strong>Preview: </strong> <span id="tagpreview"></span>
+    </p>
+    <p><button id="add">Add</button><img src="bin.svg" alt="Bin" class="bin"></p>`;
+    form.append(img, div);
+    const tagSpan = this.createElement('span', 'tag');
+    const newtask = this.getElement('#newtask');
+    newtask.after(form);
+    const tagcolourgreen = this.getElement('input#tagcolourgreen');
+    const tagcolourblue = this.getElement('input#tagcolourblue');
+    const tagcolouramber = this.getElement('input#tagcolouramber');
+    function newTagPreview() {
+      debugger;
+      document.querySelector('span#tagpreview').innerHTML = '';
+      if (tagcolourgreen.checked) {
+        tagSpan.classList.add('green');
+      }
+      if (tagcolourblue.checked) {
+        tagSpan.classList.add('blue');
+      }
+      if (tagcolouramber.checked) {
+        tagSpan.classList.add('amber');
+      }
+      tagSpan.textContent = document.querySelector('li#newtaskform div div input').value;
+      document.querySelector('#tagpreview').append(tagSpan);
+    }
+
+    this.getElement('#add').addEventListener('click', () => {
+      this.addTagRequest();
+    });
+    this.getElement('li#newtaskform div div input').select();
+    this.getElement('li#newtaskform div p img.bin').addEventListener('click', () => {
+      this.deleteTaskRequest('newtaskform');
+    }, { once: true });
+    this.getElement('li#newtaskform div div input').addEventListener('keyup', () => {
+      newTagPreview();
+    });
+    tagcolourblue.addEventListener('change', () => {
+      newTagPreview();
+    });
+    tagcolouramber.addEventListener('change', () => {
+      newTagPreview();
+    });
+    tagcolourgreen.addEventListener('change', () => {
+      newTagPreview();
+    });
+  }
+
   selectText(element) {
     const range = document.createRange();
     range.selectNodeContents(document.querySelector(element));
@@ -165,7 +222,7 @@ export default class View {
     datepicker.value = tasks[data].deadline;
     this.renderTags('edittask', data);
     const { chosenTags } = tasks[data];
-    for (let i = 0; i < chosenTags.length; i++) {
+    for (let i = 0; i < chosenTags.length; i += 1) {
       if (chosenTags[i] !== '') {
         const tagElement = this.getElement(`[data-id="${chosenTags[i]}"]`);
         if (tagElement);
@@ -185,7 +242,7 @@ export default class View {
   }
 
   renderTags(instruction, data) {
-    for (let i = 0; i < list.tags.length; i++) {
+    for (let i = 0; i < list.tags.length; i += 1) {
       const checkbox = this.createElement('input', 'hiddenradio');
       checkbox.type = 'checkbox';
       checkbox.name = 'tag';
@@ -237,10 +294,51 @@ export default class View {
     }
   }
 
+  renderTagsPage() {
+    this.getElement('main ul').innerHTML = '';
+    this.createNewSelector('tags');
+    for (let i = 0; i < list.tags.length; i += 1) {
+      const li = this.createElement('li');
+      li.setAttribute('data-tagid', list.tags[i].id);
+      const img = this.createElement('img');
+      img.src = 'tag.svg';
+      const div = this.createElement('div');
+      div.innerHTML = `<div><label for="input-${list.tags[i].id}"><strong>Name: </strong></label><input type="text" id="input-${list.tags[i].id}"></div>
+        <p><strong>Colour: </strong>
+            <input type="radio" name="${list.tags[i].id}tagcolour" class="hiddenradio" id="${list.tags[i].id}tagcolourgreen" value="green" data-tagid="${list.tags[i].id}green"><label for="${list.tags[i].id}tagcolourgreen" class="tag green" id="greenlabel">Green</label>
+            <input type="radio" name="${list.tags[i].id}tagcolour" class="hiddenradio" id="${list.tags[i].id}tagcolourblue" value="blue" data-tagid="${list.tags[i].id}blue"><label for="${list.tags[i].id}tagcolourblue" class="tag blue" id="bluelabel">Blue</label>
+            <input type="radio" name="${list.tags[i].id}tagcolour" class="hiddenradio" id="${list.tags[i].id}tagcolouramber" value="amber" data-tagid="${list.tags[i].id}amber"><label for="${list.tags[i].id}tagcolouramber" class="tag amber" id="amberlabel">Amber</label>
+        </p>
+        <p><button id="update${list.tags[i].id}">Update</button><img src="bin.svg" alt="Bin" class="bin"></p>`;
+      li.append(img, div);
+      this.getElement('main ul').append(li);
+      this.getElement(`li[data-tagid="${list.tags[i].id}"] input[type="text"]`).value = list.tags[i].name;
+      this.getElement(`input[data-tagid="${list.tags[i].id}${list.tags[i].colour.toLowerCase()}"]`).checked = true;
+      this.getElement(`#update${list.tags[i].id}`).addEventListener('click', () => {
+        list.editTag(list.tags[i].id, this.getElement(`li[data-tagid="${list.tags[i].id}"] input[type="text"]`).value, this.getElement(`input[name="${list.tags[i].id}tagcolour"]:checked`).value);
+      });
+      this.getElement(`li[data-tagid="${list.tags[i].id}"] img.bin`).addEventListener('click', () => {
+        list.deleteTag(list.tags[i].id);
+        this.renderTagsPage();
+        this.getElement('div#tagcontainer').innerHTML = `<input type="checkbox" name="showtag" id="show-untagged-tag" class="hiddenradio">
+        <label for="show-untagged-tag" class="tag grey">Untagged</label>`;
+        this.renderTags();
+      });
+    }
+  }
+
   renderTasks() {
     orderTasks();
+    function containsObject(obj, l) {
+      for (let i = 0; i < l.length; i += 1) {
+        if (l[i] === obj) {
+          return true;
+        }
+      }
+      return false;
+    }
     const dynamicListElements = document.querySelectorAll('main ul li');
-    for (let z = 1; z < dynamicListElements.length; z++) { // Removes second li onwards
+    for (let z = 1; z < dynamicListElements.length; z += 1) { // Removes second li onwards
       dynamicListElements[z].parentElement.removeChild(dynamicListElements[z]);
     }
     const filteredTasks = tasks.filter((element) => {
@@ -253,7 +351,7 @@ export default class View {
       }
       return true;
     });
-    for (let i = 0; i < tasks.length; i++) {
+    for (let i = 0; i < tasks.length; i += 1) {
       const li = this.createElement('li');
       li.setAttribute('data-task', i);
       const checkbox = this.createElement('input');
@@ -267,11 +365,7 @@ export default class View {
         this.createEditTasksForm(i);
       }, { once: true });
       div.textContent = tasks[i].title;
-      if (tasks[i].deadline && !(tasks[i].completed)) {
-        const span = this.createElement('span', 'date');
-        span.textContent = this.getDeadline(i);
-        div.append(span);
-      }
+
       if (tasks[i].completed) {
         checkbox.checked = true;
         div.classList.add('checked');
@@ -279,7 +373,7 @@ export default class View {
       if (tasks[i].important) {
         div.classList.add('important');
       }
-      for (let y = 0; y < tasks[i].chosenTags.length; y++) {
+      for (let y = 0; y < tasks[i].chosenTags.length; y += 1) {
         if ((tasks[i].chosenTags[y] !== '') && !(tasks[i].completed)) {
           const tagSpan = this.createElement('span', 'tag');
           const tag = list.tags.find((e) => e.id === Number(tasks[i].chosenTags[y]));
@@ -288,31 +382,31 @@ export default class View {
           div.append(tagSpan);
         }
       }
-      function containsObject(obj, list) {
-        for (let i = 0; i < list.length; i++) {
-          if (list[i] === obj) {
-            return true;
-          }
-        }
-        return false;
+      if (tasks[i].deadline && !(tasks[i].completed)) {
+        const span = this.createElement('span', 'date');
+        span.textContent = this.getDeadline(i);
+        div.append(span);
       }
       li.append(checkbox, div);
-      container.append(li);
+      this.getElement('#container').append(li);
       if (!containsObject(tasks[i], filteredTasks)) {
         li.style.display = 'none';
       }
     }
+    if (tasks.length === 0) {
+      this.createNewTaskForm();
+    }
   }
 
   editTaskRequest(data) {
-    // Do some form validation and error checking at a later stage, including making sure a date is selected
+    // Do some form validation and error checking at a later stage
     const title = this.getElement(`li[data-task="${data}"] div div`).textContent;
     const deadline = this.getElement(`li[data-task="${data}"] div p label input.date`).value;
     const important = this.getElement(`li[data-task="${data}"] div p p input#important`).checked;
     function chosenTags() {
       const arrayOfChosenTags = [];
       const tagCheckboxes = document.querySelectorAll(`span[data-tagcontainerid="${data}"] input[name=tag]`);
-      for (let i = 0; i < tagCheckboxes.length; i++) {
+      for (let i = 0; i < tagCheckboxes.length; i += 1) {
         const tagCheckbox = tagCheckboxes[i];
         if (tagCheckbox.checked) arrayOfChosenTags.push(tagCheckbox.dataset.id);
       }
@@ -331,14 +425,14 @@ export default class View {
   }
 
   addTaskRequest() {
-    // Do some form validation and error checking at a later stage, including making sure a date is selected
+    // Do some form validation and error checking at a later stage
     const title = document.getElementById('new-task-title').innerHTML;
     const deadline = document.getElementById('datepickerinput').value;
     const important = document.getElementById('important').checked;
     function chosenTags() {
       const arrayOfChosenTags = [];
       const tagCheckboxes = document.querySelectorAll('#newtagcontainer input[name=tag]');
-      for (let i = 0; i < tagCheckboxes.length; i++) {
+      for (let i = 0; i < tagCheckboxes.length; i += 1) {
         const tagCheckbox = tagCheckboxes[i];
         if (tagCheckbox.checked) arrayOfChosenTags.push(tagCheckbox.dataset.id);
       }
@@ -347,7 +441,53 @@ export default class View {
     new Task(title, deadline, important, chosenTags(), false);
     const newTaskForm = document.getElementById('newtaskform');
     newTaskForm.style.display = 'none';
-    view.renderTasks();
+    this.renderTasks();
+  }
+
+  addTagRequest() {
+    // Do some form validation and error checking
+    const name = this.getElement('li#newtaskform div div input').value;
+    const colour = this.getElement('input[name=tagcolour]:checked').value;
+    list.addTag(name, colour);
+    console.table(list.tags);
+  }
+
+  createNewSelector(data) {
+    this.container = this.getElement('#container');
+    this.newtask = this.createElement('li');
+    this.newtask.id = 'newtask';
+    const plusimage = this.createElement('img');
+    plusimage.src = 'plus.svg';
+    this.div = this.createElement('div');
+    this.newtask.append(plusimage, this.div);
+    this.container.prepend(this.newtask);
+    if (data === 'tasks') {
+      this.div.textContent = 'New task...';
+      this.newtask.addEventListener('click', () => {
+        this.createNewTaskForm();
+      });
+    } else if (data === 'tags') {
+      this.div.textContent = 'New tag...';
+      this.newtask.addEventListener('click', () => {
+        this.createNewTagForm();
+      });
+    }
+  }
+
+  clickNav(data) {
+    this.getElement('#newtask').remove();
+    if (data === 'tasks') {
+      this.getElement('header ul li:first-child').classList.add('selected');
+      this.getElement('header ul li:nth-child(2)').classList.remove('selected');
+      this.createNewSelector('tasks');
+      this.renderTasks();
+    } else if (data === 'tags') {
+      this.getElement('header ul li:first-child').classList.remove('selected');
+      this.getElement('header ul li:nth-child(2)').classList.add('selected');
+      this.getElement('main ul').innerHTML = '';
+      this.createNewSelector('tags');
+      this.renderTagsPage();
+    }
   }
 }
 

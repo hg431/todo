@@ -27,6 +27,11 @@ export class Tag {
 
   deleteTag(id) {
     this.tags = this.tags.filter((tag) => tag.id !== id);
+    for (let i = 0; i < tasks.length; i += 1) {
+      const index = tasks[i].chosenTags.indexOf(id);
+      tasks[i].chosenTags.splice(index, 1);
+    }
+    // something to delete all instances of that id from tasks[i].chosenTags array
   }
 
   addTagHide(id) {
@@ -52,11 +57,6 @@ export class Task {
     tasks.push(this);
   }
 }
-
-new Task('Important tagless task completed', '2023-03-29', true, [], true);
-new Task('Work task, unimportant, deadline later uncompleted', '2023-03-28', false, ['2', '1'], false);
-new Task('Work task, unimportant, deadline earlier uncompleted', '2023-03-27', false, ['2'], false);
-new Task('Personal important task uncompleted', '2023-04-26', true, ['1'], false);
 
 export const view = new View();
 view.renderTasks();

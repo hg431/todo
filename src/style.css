@@ -41,7 +41,7 @@
     cursor: pointer;
   }
 
-  header li:hover {
+  header li:hover, header li.selected {
     background-color: var(--main-medium);
   }
 
@@ -189,17 +189,17 @@ main ul li input[type="checkbox"]:checked + label {
     display:none;
   }
 
-input[id="amber-tag"]:checked + label, input[id="show-amber-tag"]:checked + label {
+input[id="amber-tag"]:checked + label, input[id="show-amber-tag"]:checked + label, input[id$="tagcolouramber"]:checked + label {
     background-color: var(--amber-dark);
     color: var(--amber-light);
   }
 
-  input[id="blue-tag"]:checked + label, input[id="show-blue-tag"]:checked + label {
+  input[id="blue-tag"]:checked + label, input[id="show-blue-tag"]:checked + label, input[id$="tagcolourblue"]:checked + label {
     background-color: var(--blue-dark);
     color: var(--blue-light);
   }
 
-  input[id="green-tag"]:checked + label,   input[id="show-green-tag"]:checked + label {
+  input[id="green-tag"]:checked + label,   input[id="show-green-tag"]:checked + label, input[id$="tagcolourgreen"]:checked + label {
     background-color: var(--green-dark);
     color: var(--green-light);
   }
