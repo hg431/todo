@@ -6,12 +6,7 @@ module.exports = {
   entry: {
     index: './src/index.js',
   },
-  devtool: 'inline-source-map',
   plugins: [
-    /*     new HtmlWebpackPlugin({
-      inject: false,
-      title: 'To do lists',
-    }), */
   ],
   output: {
     filename: 'bundle.js',
