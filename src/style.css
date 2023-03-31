@@ -105,7 +105,7 @@
   }
 
   main ul li {
-    font-size: 14px;
+    font-size: 16px;
     border-bottom: 1px solid var(--main-light);
     padding: 18px 0;
     margin:0 5px;
@@ -145,12 +145,11 @@
     padding-right:3px;
   }
 
-/* NEEDS FIXING - CLASH BETWEEN THE TASK AND A SELECTED TAG
-
-main ul li input[type="checkbox"]:checked + label {
-    text-decoration:line-through;
-  } */
-
+  .tagicon {
+    width:15px;
+    height:15px;
+    justify-self: center;
+  }
   .date {
     background-color: var(--main-light);
     border-radius: 15px;
@@ -164,10 +163,6 @@ main ul li input[type="checkbox"]:checked + label {
     border:none;
     color: var(--main-dark);
   }
-
- /*  #newtaskform {
-    display:none;
-  } */
 
  input[type="date"]::-webkit-inner-spin-button,
     input[type="date"]::-webkit-calendar-picker-indicator {
@@ -192,16 +187,19 @@ main ul li input[type="checkbox"]:checked + label {
 input[id="amber-tag"]:checked + label, input[id="show-amber-tag"]:checked + label, input[id$="tagcolouramber"]:checked + label {
     background-color: var(--amber-dark);
     color: var(--amber-light);
+    margin-right:10px;
   }
 
   input[id="blue-tag"]:checked + label, input[id="show-blue-tag"]:checked + label, input[id$="tagcolourblue"]:checked + label {
     background-color: var(--blue-dark);
     color: var(--blue-light);
+    margin-right:10px;
   }
 
   input[id="green-tag"]:checked + label,   input[id="show-green-tag"]:checked + label, input[id$="tagcolourgreen"]:checked + label {
     background-color: var(--green-dark);
     color: var(--green-light);
+    margin-right:10px;
   }
 
   input[id="show-untagged-tag"]:checked + label {
@@ -226,6 +224,9 @@ input[id="amber-tag"]:checked + label, input[id="show-amber-tag"]:checked + labe
     vertical-align: -2px;
     background-size:12px 12px;
   }
+li#newtaskform .amber, li#newtaskform .blue, li#newtaskform .green {
+  margin-right:10px;
+}
 .amber {
     background-color: var(--amber-light);
     color: var(--amber-dark);

@@ -8,14 +8,14 @@ import startOfToday from 'date-fns/startOfToday';
 import startOfTomorrow from 'date-fns/startOfTomorrow';
 import isBefore from 'date-fns/isBefore';
 import {
-  tasks, Task, orderTasks, view, list, editTask, deleteTask, toggleCompletedStatus,
+  tasks, Task, orderTasks, list, editTask, deleteTask, toggleCompletedStatus, populateStorage,
 } from './index';
 
 export default class View {
   constructor() {
+    this.getElement('header ul li:first-child').classList.add('selected');
     this.container = this.getElement('#container');
-    this.newtask = this.createElement('li');
-    this.newtask.id = 'newtask';
+    this.newtask = this.createElement('li', null, 'newtask');
     this.plusimage = this.createElement('img');
     this.plusimage.src = 'plus.svg';
     this.div = this.createElement('div');
@@ -33,9 +33,10 @@ export default class View {
     });
   }
 
-  createElement(tag, className) {
+  createElement(tag, className, idName) {
     const element = document.createElement(tag);
     if (className) element.classList.add(className);
+    if (idName) element.id = idName;
     return element;
   }
 
@@ -47,22 +48,16 @@ export default class View {
   getDeadline(i) {
     if (tasks[i].deadline) {
       const date = parseISO(tasks[i].deadline);
-      if (isBefore(date, startOfToday())) {
-        return 'Overdue';
-      } if (isTomorrow(date)) {
-        return 'Tomorrow';
-      } if (isToday(date)) {
-        return 'Today';
-      } if (differenceInDays(addDays(startOfToday(), 6), date) >= 0) {
-        return format(date, 'EEEE');
-      }
+      if (isBefore(date, startOfToday())) return 'Overdue';
+      if (isTomorrow(date)) return 'Tomorrow';
+      if (isToday(date)) return 'Today';
+      if (differenceInDays(addDays(startOfToday(), 6), date) >= 0) return format(date, 'EEEE');
       return format(date, 'd MMM');
     }
   }
 
   createNewTaskForm() {
-    const form = this.createElement('li');
-    form.id = 'newtaskform';
+    const form = this.createElement('li', null, 'newtaskform');
     const checkbox = this.createElement('input');
     checkbox.type = 'checkbox';
     const div = this.createElement('div');
@@ -132,8 +127,7 @@ export default class View {
   }
 
   createNewTagForm() {
-    const form = this.createElement('li');
-    form.id = 'newtaskform';
+    const form = this.createElement('li', null, 'newtaskform');
     const img = this.createElement('img');
     img.src = 'tag.svg';
     const div = this.createElement('div');
@@ -154,17 +148,10 @@ export default class View {
     const tagcolourblue = this.getElement('input#tagcolourblue');
     const tagcolouramber = this.getElement('input#tagcolouramber');
     function newTagPreview() {
-      debugger;
       document.querySelector('span#tagpreview').innerHTML = '';
-      if (tagcolourgreen.checked) {
-        tagSpan.classList.add('green');
-      }
-      if (tagcolourblue.checked) {
-        tagSpan.classList.add('blue');
-      }
-      if (tagcolouramber.checked) {
-        tagSpan.classList.add('amber');
-      }
+      if (tagcolourgreen.checked) tagSpan.classList.add('green');
+      if (tagcolourblue.checked) tagSpan.classList.add('blue');
+      if (tagcolouramber.checked) tagSpan.classList.add('amber');
       tagSpan.textContent = document.querySelector('li#newtaskform div div input').value;
       document.querySelector('#tagpreview').append(tagSpan);
     }
@@ -203,12 +190,8 @@ export default class View {
     const div = this.createElement('div');
     div.contentEditable = 'true';
     div.textContent = tasks[data].title;
-    if (tasks[data].completed) {
-      div.classList.add('checked');
-    }
-    if (tasks[data].important) {
-      div.classList.add('important');
-    }
+    if (tasks[data].completed) div.classList.add('checked');
+    if (tasks[data].important) div.classList.add('important');
     const p = this.createElement('p');
     p.innerHTML = `<strong>Deadline: </strong>
         <input type="radio" name="date" class="hiddenradio" id="datepicker"><label for="datepicker">
@@ -225,13 +208,10 @@ export default class View {
     for (let i = 0; i < chosenTags.length; i += 1) {
       if (chosenTags[i] !== '') {
         const tagElement = this.getElement(`[data-id="${chosenTags[i]}"]`);
-        if (tagElement);
-        tagElement.checked = true;
+        if (tagElement) tagElement.checked = true;
       }
     }
-    if (tasks[data].important) {
-      this.getElement('input#important').checked = true;
-    }
+    if (tasks[data].important) this.getElement('input#important').checked = true;
     this.getElement('#edit').addEventListener('click', () => {
       this.editTaskRequest(data);
     }, { once: true });
@@ -251,14 +231,11 @@ export default class View {
       const label = this.createElement('label', 'tag');
       label.classList.add(tagColour);
       label.textContent = list.tags[i].name;
-      if (instruction === 'newtask') {
+      if (instruction === 'newtask' || instruction === 'edittask') {
         checkbox.id = `${tagColour}-tag`;
         label.htmlFor = `${tagColour}-tag`;
-        this.getElement('#newtagcontainer').append(checkbox, label);
-      } else if (instruction === 'edittask') {
-        checkbox.id = `${tagColour}-tag`;
-        label.htmlFor = `${tagColour}-tag`;
-        this.getElement(`[data-tagcontainerid="${data}"]`).append(checkbox, label);
+        if (instruction === 'newtask') this.getElement('#newtagcontainer').append(checkbox, label);
+        if (instruction === 'edittask') this.getElement(`[data-tagcontainerid="${data}"]`).append(checkbox, label);
       } else { // this is the settings filter
         checkbox.id = `show-${tagColour}-tag`;
         label.htmlFor = `show-${tagColour}-tag`;
@@ -279,7 +256,6 @@ export default class View {
           }
         });
       }
-      // This will be a bug when there are multiple tags of the same colour
     }
     if (instruction !== 'newtask' && instruction !== 'edittask') {
       this.getElement('input#show-untagged-tag').addEventListener('click', () => {
@@ -300,7 +276,7 @@ export default class View {
     for (let i = 0; i < list.tags.length; i += 1) {
       const li = this.createElement('li');
       li.setAttribute('data-tagid', list.tags[i].id);
-      const img = this.createElement('img');
+      const img = this.createElement('img', 'tagicon');
       img.src = 'tag.svg';
       const div = this.createElement('div');
       div.innerHTML = `<div><label for="input-${list.tags[i].id}"><strong>Name: </strong></label><input type="text" id="input-${list.tags[i].id}"></div>
@@ -331,9 +307,7 @@ export default class View {
     orderTasks();
     function containsObject(obj, l) {
       for (let i = 0; i < l.length; i += 1) {
-        if (l[i] === obj) {
-          return true;
-        }
+        if (l[i] === obj) return true;
       }
       return false;
     }
@@ -343,9 +317,8 @@ export default class View {
     }
     const filteredTasks = tasks.filter((element) => {
       if (element.chosenTags.length === 0) {
-        if (list.tagHide.includes('untagged')) {
-          return false;
-        } return true;
+        if (list.tagHide.includes('untagged')) return false;
+        return true;
       } if (element.chosenTags.every((el) => list.tagHide.some((e) => e === Number(el)))) {
         return false;
       }
@@ -370,9 +343,7 @@ export default class View {
         checkbox.checked = true;
         div.classList.add('checked');
       }
-      if (tasks[i].important) {
-        div.classList.add('important');
-      }
+      if (tasks[i].important) div.classList.add('important');
       for (let y = 0; y < tasks[i].chosenTags.length; y += 1) {
         if ((tasks[i].chosenTags[y] !== '') && !(tasks[i].completed)) {
           const tagSpan = this.createElement('span', 'tag');
@@ -389,13 +360,9 @@ export default class View {
       }
       li.append(checkbox, div);
       this.getElement('#container').append(li);
-      if (!containsObject(tasks[i], filteredTasks)) {
-        li.style.display = 'none';
-      }
+      if (!containsObject(tasks[i], filteredTasks)) li.style.display = 'none';
     }
-    if (tasks.length === 0) {
-      this.createNewTaskForm();
-    }
+    if (tasks.length === 0) this.createNewTaskForm();
   }
 
   editTaskRequest(data) {
@@ -403,17 +370,8 @@ export default class View {
     const title = this.getElement(`li[data-task="${data}"] div div`).textContent;
     const deadline = this.getElement(`li[data-task="${data}"] div p label input.date`).value;
     const important = this.getElement(`li[data-task="${data}"] div p p input#important`).checked;
-    function chosenTags() {
-      const arrayOfChosenTags = [];
-      const tagCheckboxes = document.querySelectorAll(`span[data-tagcontainerid="${data}"] input[name=tag]`);
-      for (let i = 0; i < tagCheckboxes.length; i += 1) {
-        const tagCheckbox = tagCheckboxes[i];
-        if (tagCheckbox.checked) arrayOfChosenTags.push(tagCheckbox.dataset.id);
-      }
-      return arrayOfChosenTags;
-    }
     const completed = this.getElement(`li[data-task="${data}"] input[type=checkbox]`).checked;
-    editTask(data, title, deadline, important, chosenTags(), completed);
+    editTask(data, title, deadline, important, this.getChosenTags(`span[data-tagcontainerid="${data}"] input[name=tag]`), completed);
   }
 
   deleteTaskRequest(data) {
@@ -424,21 +382,22 @@ export default class View {
     }
   }
 
+  getChosenTags(data) {
+    const arrayOfChosenTags = [];
+    const tagCheckboxes = document.querySelectorAll(data);
+    for (let i = 0; i < tagCheckboxes.length; i += 1) {
+      const tagCheckbox = tagCheckboxes[i];
+      if (tagCheckbox.checked) arrayOfChosenTags.push(tagCheckbox.dataset.id);
+    }
+    return arrayOfChosenTags;
+  }
+
   addTaskRequest() {
     // Do some form validation and error checking at a later stage
     const title = document.getElementById('new-task-title').innerHTML;
     const deadline = document.getElementById('datepickerinput').value;
     const important = document.getElementById('important').checked;
-    function chosenTags() {
-      const arrayOfChosenTags = [];
-      const tagCheckboxes = document.querySelectorAll('#newtagcontainer input[name=tag]');
-      for (let i = 0; i < tagCheckboxes.length; i += 1) {
-        const tagCheckbox = tagCheckboxes[i];
-        if (tagCheckbox.checked) arrayOfChosenTags.push(tagCheckbox.dataset.id);
-      }
-      return arrayOfChosenTags;
-    }
-    new Task(title, deadline, important, chosenTags(), false);
+    new Task(title, deadline, important, this.getChosenTags('#newtagcontainer input[name=tag]'), false);
     const newTaskForm = document.getElementById('newtaskform');
     newTaskForm.style.display = 'none';
     this.renderTasks();
@@ -449,13 +408,11 @@ export default class View {
     const name = this.getElement('li#newtaskform div div input').value;
     const colour = this.getElement('input[name=tagcolour]:checked').value;
     list.addTag(name, colour);
-    console.table(list.tags);
   }
 
   createNewSelector(data) {
     this.container = this.getElement('#container');
-    this.newtask = this.createElement('li');
-    this.newtask.id = 'newtask';
+    this.newtask = this.createElement('li', null, 'newtask');
     const plusimage = this.createElement('img');
     plusimage.src = 'plus.svg';
     this.div = this.createElement('div');
@@ -498,3 +455,7 @@ document.getElementById('cog').addEventListener('click', () => {
 document.getElementById('close').addEventListener('click', () => {
   footer.style.display = 'none';
 });
+document.querySelector('footer div img.bin').addEventListener('click', () => {
+  localStorage.clear();
+  window.location.reload();
+}, { once: true });
