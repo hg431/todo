@@ -24,6 +24,9 @@
     list-style:none;
   }
 
+  input[type="date"] {
+    -webkit-appearance: textfield;
+  }
  /* HEADER NAVIGATION */
 
   header ul {
